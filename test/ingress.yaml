@@ -14,6 +14,6 @@ spec:
             path: /react-ui-demo(.*)
             backend:
               service:
-                name: elog-plus-frontend-service
+                name: react-ui-demo-service
                 port:
                   number: 80
