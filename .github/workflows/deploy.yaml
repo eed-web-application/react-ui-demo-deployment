@@ -42,6 +42,7 @@ jobs:
   deploy-production:
     runs-on: ubuntu-latest
     environment: production
+    needs: deploy-staging
     steps:
       - name: Checkout source code
         uses: actions/checkout@v3
