@@ -1,0 +1,46 @@
+name: Build Test
+on: 
+  workflow_call:
+      secrets:
+          token:
+              required: false
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+jobs:
+    build_and_test:
+      runs-on: ubuntu-latest
+      steps:
+        - uses: actions/checkout@v3  # Check out your project code
+    
+        - name: Use Node.js  # Setup Node (with matrix support)
+          uses: actions/setup-node@v3
+          with:
+            node-version: 21.x
+    
+        - run: npm ci  # Install dependencies
+      
+        - name: Check for docker-compose.yml file
+          uses: andstor/file-existence-action@v2
+          id: check_files
+          with:
+            files: "docker-compose.yml"
+
+        - name: Start test backend
+          if: steps.check_files.outputs.files_exists == 'true'
+          run: |
+            docker compose -f docker-compose.yml up -d
+            sleep 5
+
+        - name: Test Project
+          # if: env.RUN_TESTS == 'true'
+          run: npm test -- --watchAll=false
+
+        - name: Shoutdown test backend
+          if: steps.check_files.outputs.files_exists == 'true' &&  (success() || failure())
+          run: |
+            docker compose -f docker-compose.yml logs
+            docker compose -f docker-compose.yml down -v
