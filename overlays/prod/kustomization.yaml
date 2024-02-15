@@ -1,7 +1,0 @@
-apiVersion: kustomize.config.k8s.io/v1beta1
-kind: Kustomization
-resources:
-  - ../../base
-images:
-  - name: elog-plus-frontend-image
-    newName: ghcr.io/eed-web-application/elog-plus-frontend:sha-3b7553d
