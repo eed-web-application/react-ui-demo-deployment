@@ -55,6 +55,6 @@ jobs:
     needs: create-image
     steps:
       - run: |
-          gh workflow --repo eed-web-application/elog-plus-frontend-deployment run Deploy -f image="${{needs.create-image.outputs.IMAGE_TO_DEPLOY}}"
+          gh workflow --repo eed-web-application/react-ui-demo-deployment run Deploy -f image="${{needs.create-image.outputs.IMAGE_TO_DEPLOY}}"
         env:
           GITHUB_TOKEN: ${{ secrets.DEPLOYMENT_GITHUB_TOKEN }}
