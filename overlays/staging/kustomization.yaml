@@ -4,4 +4,4 @@ resources:
   - ../../base
 images:
   - name: elog-plus-frontend-image
-    newName: ghcr.io/eed-web-application/elog-plus-frontend:sha-660ea19
+    newName: ghcr.io/eed-web-application/react-ui-demo:sha-82af002
