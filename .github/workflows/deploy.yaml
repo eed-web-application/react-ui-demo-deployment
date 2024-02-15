@@ -1,0 +1,64 @@
+name: Deploy
+on:
+  workflow_dispatch:
+    inputs:
+      image:
+        description: "Image to deploy"
+        required: true
+        type: string
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+env:
+  IMAGE: ${{ inputs.image }}
+
+jobs:
+  deploy-staging:
+    runs-on: ubuntu-latest
+    environment: test
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v3
+
+      - name: Update image
+        run: |
+          echo "Updating staging config to use image $IMAGE"
+          tools/set-image-name.sh $IMAGE overlays/staging/kustomization.yaml
+          cat overlays/staging/kustomization.yaml
+
+      - name: Commit and Push Changes
+        id: commit-and-push
+        run: |
+          echo "Commiting staging config with image $IMAGE" 
+          git add overlays/staging
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git commit -m "Update staging environment to '$IMAGE'"
+          git push
+          echo "commit_hash=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
+
+  deploy-production:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v3
+
+      - name: Update image
+        run: |
+          echo "Updating production config to use image $IMAGE"
+          tools/set-image-name.sh $IMAGE overlays/prod/kustomization.yaml
+          cat overlays/prod/kustomization.yaml
+
+      - name: Commit and Push Changes
+        id: commit-and-push
+        run: |
+          echo "Commiting production config with image $IMAGE" 
+          git add overlays/prod
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git commit -m "Update production environment to '$IMAGE'"
+          git push
+          echo "commit_hash=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT

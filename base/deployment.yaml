@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: react-ui-demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: react-ui-demo
+  template:
+    metadata:
+      labels:
+        app: react-ui-demo
+    spec:
+      containers:
+        - name: react-ui-demo
+          image: react-ui-demo-image
+          resources:
+            limits:
+              memory: 512Mi
+              cpu: "250m"
+          ports:
+            - containerPort: 8080
+      imagePullSecrets:
+        - name: gh-secret
