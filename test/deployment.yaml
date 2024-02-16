@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: react-ui-demo
-        image: ghcr.io/eed-web-application/react-ui-demo:sha-ac37971
+          image: ghcr.io/eed-web-application/react-ui-demo:sha-ac37971
           resources:
             limits:
               memory: 512Mi
